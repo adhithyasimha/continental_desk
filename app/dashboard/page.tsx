@@ -1,3 +1,4 @@
+"use client"
 import React from "react"
 import Link from "next/link"
 import {
@@ -13,7 +14,7 @@ import {
   Search,
   Users,
 } from "lucide-react"
-
+import { useRouter } from "next/navigation" // Updated import
 import {
   Avatar,
   AvatarFallback,
@@ -48,6 +49,12 @@ import {
 } from "@/components/ui/table"
 
 export default function HotelDashboard() {
+  const router = useRouter(); // Initialize useRouter
+
+  const navigateTo = (path: string) => {
+    router.push(path); // Use router.push for navigation
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col">
       <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
@@ -56,40 +63,31 @@ export default function HotelDashboard() {
             href="#"
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
           >
-            
             <Package2 className="h-6 w-6" />
-            <span>Continetal</span>
+            <span>Continental</span>
           </Link>
           <Link
             href="#"
             className="text-foreground transition-colors hover:text-foreground"
+            onClick={() => navigateTo('/dashboard')}
           >
             Dashboard
           </Link>
           <Link
             href="#"
             className="text-muted-foreground transition-colors hover:text-foreground"
+            onClick={() => navigateTo('/bookings')}
           >
             Bookings
           </Link>
           <Link
             href="#"
             className="text-muted-foreground transition-colors hover:text-foreground"
+            onClick={() => navigateTo('/rooms')}
           >
             Rooms
           </Link>
-          <Link
-            href="#"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Guests
-          </Link>
-          <Link
-            href="#"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Properties
-          </Link>
+          
         </nav>
         <Sheet>
           <SheetTrigger asChild>
@@ -111,18 +109,24 @@ export default function HotelDashboard() {
                 <Package2 className="h-6 w-6" />
                 <span>Marriott Bonvoy HMS</span>
               </Link>
-              <Link href="#" className="hover:text-foreground">
+              <Link 
+                href="#" 
+                className="hover:text-foreground" 
+                onClick={() => navigateTo('/dashboard')}
+              >
                 Dashboard
               </Link>
               <Link
                 href="#"
                 className="text-muted-foreground hover:text-foreground"
+                onClick={() => navigateTo('/bookings')}
               >
                 Bookings
               </Link>
               <Link
                 href="#"
                 className="text-muted-foreground hover:text-foreground"
+                onClick={() => navigateTo('/rooms')}
               >
                 Rooms
               </Link>
@@ -132,12 +136,7 @@ export default function HotelDashboard() {
               >
                 Guests
               </Link>
-              <Link
-                href="#"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                Properties
-              </Link>
+              
             </nav>
           </SheetContent>
         </Sheet>
@@ -232,9 +231,7 @@ export default function HotelDashboard() {
             <CardHeader className="flex flex-row items-center">
               <div className="grid gap-2">
                 <CardTitle>Recent Bookings</CardTitle>
-                <CardDescription>
-                  Latest reservations across all properties.
-                </CardDescription>
+                
               </div>
               <Button asChild size="sm" className="ml-auto gap-1">
                 <Link href="#">
@@ -248,119 +245,24 @@ export default function HotelDashboard() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Guest</TableHead>
-                    <TableHead className="hidden xl:table-column">
-                      Property
-                    </TableHead>
-                    <TableHead className="hidden xl:table-column">
-                      Status
-                    </TableHead>
-                    <TableHead className="hidden xl:table-column">
-                      Check-in
-                    </TableHead>
-                    <TableHead className="text-right">Total</TableHead>
+                    <TableHead>Room Type</TableHead>
+                    <TableHead>Room No</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
+                  {/* Repeat for each booking */}
                   <TableRow>
+                    <TableCell>James Bond</TableCell>
+                    <TableCell>Presidential Suite</TableCell>
+                    <TableCell>007</TableCell>
+                    <TableCell>2024-10-05</TableCell>
                     <TableCell>
-                      <div className="font-medium">Emma Thompson</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        emma@example.com
-                      </div>
+                      <Badge variant={"secondary"}>Confirmed</Badge>
                     </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Marriott Downtown
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Confirmed
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2024-10-15
-                    </TableCell>
-                    <TableCell className="text-right">$789.00</TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Liam Patel</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        liam@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Ritz-Carlton Beachfront
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Checked In
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2024-10-14
-                    </TableCell>
-                    <TableCell className="text-right">$1,250.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Sophia Chen</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        sophia@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Westin Resort
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Pending
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2024-10-18
-                    </TableCell>
-                    <TableCell className="text-right">$975.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Noah Garcia</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        noah@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Sheraton City Center
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Confirmed
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2024-10-20
-                    </TableCell>
-                    <TableCell className="text-right">$650.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Olivia Kim</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        olivia@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      W Hotel Metropolis
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Confirmed
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2024-10-22
-                    </TableCell>
-                    <TableCell className="text-right">$890.00</TableCell>
-                  </TableRow>
+                  
                 </TableBody>
               </Table>
             </CardContent>
