@@ -49,7 +49,7 @@ function Bookings() {
 
   return (
     <Layout>
-      <h1 className="text-xl font-semibold mb-4">Bookings</h1>
+      
 
       {loading ? (
         <p>Loading bookings...</p>

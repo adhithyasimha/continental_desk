@@ -1,6 +1,6 @@
 import React from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -8,7 +8,11 @@ import { Input } from "@/components/ui/input"
 import { Menu, Search, CircleUser, Package2 } from "lucide-react"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
+  const pathname = usePathname()
+
+  const getLinkClass = (path: string) => {
+    return pathname === path ? "text-foreground font-bold" : "text-muted-foreground transition-colors hover:text-foreground"
+  }
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -18,13 +22,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Package2 className="h-6 w-6" />
             <span>Continental</span>
           </Link>
-          <Link href="/dashboard" className="text-foreground transition-colors hover:text-foreground">
+          <Link href="/dashboard" className={getLinkClass("/dashboard")}>
             Dashboard
           </Link>
-          <Link href="/bookings" className="text-muted-foreground transition-colors hover:text-foreground">
+          <Link href="/bookings" className={getLinkClass("/bookings")}>
             Bookings
           </Link>
-          <Link href="/rooms" className="text-muted-foreground transition-colors hover:text-foreground">
+          <Link href="/rooms" className={getLinkClass("/rooms")}>
             Rooms
           </Link>
         </nav>
@@ -42,16 +46,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Package2 className="h-6 w-6" />
                 <span>Marriott Bonvoy HMS</span>
               </Link>
-              <Link href="/dashboard" className="hover:text-foreground">
+              <Link href="/dashboard" className={getLinkClass("/dashboard")}>
                 Dashboard
               </Link>
-              <Link href="/bookings" className="text-muted-foreground hover:text-foreground">
+              <Link href="/bookings" className={getLinkClass("/bookings")}>
                 Bookings
               </Link>
-              <Link href="/rooms" className="text-muted-foreground hover:text-foreground">
+              <Link href="/rooms" className={getLinkClass("/rooms")}>
                 Rooms
               </Link>
-              <Link href="/guests" className="text-muted-foreground hover:text-foreground">
+              <Link href="/guests" className={getLinkClass("/guests")}>
                 Guests
               </Link>
             </nav>
