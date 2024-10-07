@@ -74,9 +74,9 @@ export default function HotelDashboard() {
             Dashboard
           </Link>
           <Link
-            href="#"
+          href={'/bookings'}
             className="text-muted-foreground transition-colors hover:text-foreground"
-            onClick={() => navigateTo('/bookings')}
+            onClick={() => router.push('/bookings')}
           >
             Bookings
           </Link>
