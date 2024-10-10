@@ -1,7 +1,14 @@
 'use client';
 
 import React, { useEffect, useState } from "react";
-import { Table } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { Button } from "@/components/ui/button";
 import supabase from "@/supabaseClient";
 import {
@@ -11,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Layout from "@/components/ui/layout";
-
+import { Card, CardContent } from "@/components/ui/card";
 // Define the Booking interface
 interface Booking {
   reservation_id: string;
@@ -55,51 +62,54 @@ function Bookings() {
         <p>Loading bookings...</p>
       ) : (
         <div className="overflow-x-auto shadow-md rounded-lg border border-gray-200">
-          <Table>
-            <thead>
-              <tr>
-                <th>Reservation ID</th>
-                <th>Guest Name</th>
-                <th>Room Type</th>
-                <th>Check-in Date</th>
-                <th>Check-out Date</th>
-                <th>Guests</th>
-                <th>Payment Status</th>
-                <th>Total Price</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {bookings.map((booking) => (
-                <tr key={booking.reservation_id}>
-                  <td>{booking.reservation_id}</td>
-                  <td>{booking.guest_name}</td>
-                  <td>{booking.room_type}</td>
-                  <td>{new Date(booking.check_in_date).toLocaleDateString()}</td>
-                  <td>{new Date(booking.check_out_date).toLocaleDateString()}</td>
-                  <td>{booking.number_of_guests}</td>
-                  <td>{booking.payment_status}</td>
-                  <td>${booking.total_price.toFixed(2)}</td>
-                  <td>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button>Actions</Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuItem>View</DropdownMenuItem>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </div>
-      )}
-    </Layout>
-  );
+<Card>
+<CardContent>
+  <Table>
+    <TableHeader>
+      <TableRow>
+        <TableHead>RID</TableHead>
+        <TableHead>Guest Name</TableHead>
+        <TableHead>Room Type</TableHead>
+        <TableHead>Check-in Date</TableHead>
+        <TableHead>Check-out Date</TableHead>
+        <TableHead>Guests</TableHead>
+        <TableHead>Payment Status</TableHead>
+        <TableHead>Total Price</TableHead>
+        <TableHead>Actions</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {bookings.map((booking) => (
+        <TableRow key={booking.reservation_id}>
+        <TableCell>{booking.reservation_id}</TableCell>
+        <TableCell>{booking.room_type}</TableCell>
+        <TableCell>{new Date(booking.check_in_date).toLocaleDateString()}</TableCell>
+        <TableCell>{new Date(booking.check_out_date).toLocaleDateString()}</TableCell>
+        <TableCell>{booking.number_of_guests}</TableCell>
+        <TableCell>{booking.payment_status}</TableCell>
+        <TableCell>${booking.total_price.toFixed(2)}</TableCell>
+        <TableCell>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button>Actions</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>View</DropdownMenuItem>
+                <DropdownMenuItem>Edit</DropdownMenuItem>
+                <DropdownMenuItem>Delete</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</CardContent>
+</Card>
+</div>
+)}
+</Layout>
+);
 }
 
 export default Bookings;
