@@ -50,7 +50,6 @@ function Bookings() {
         setBookings(data);
       }
 
-      // Simulate a 2-second delay before setting loading to false
       setTimeout(() => {
         setLoading(false);
       }, 1000);
