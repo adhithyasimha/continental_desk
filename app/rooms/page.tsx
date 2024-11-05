@@ -1,5 +1,4 @@
 "use client"
-
 import React, { useEffect, useState } from "react";
 import {
   Table,
@@ -18,9 +17,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Layout from "@/components/ui/layout";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { createClient } from '@supabase/supabase-js'
 
-// Simplified interface without hotel_id
 interface Room {
   id: string;
   room_number: string;
@@ -31,6 +30,11 @@ interface Room {
 export default function Rooms() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingCell, setEditingCell] = useState<{
+    id: string;
+    field: keyof Room;
+  } | null>(null);
+  const [editValue, setEditValue] = useState<string>("");
 
   // Initialize Supabase client
   const supabase = createClient(
@@ -38,32 +42,68 @@ export default function Rooms() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
   );
 
-  useEffect(() => {
-    async function fetchRooms() {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("rooms")
-        .select(`
-          id,
-          room_number,
-          type,
-          price_per_night,
-          created_at
-        `);
+  const fetchRooms = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("rooms")
+      .select(`
+        id,
+        room_number,
+        type,
+        price_per_night,
+        created_at
+      `);
 
-      if (error) {
-        console.error("Error fetching rooms:", error);
-      } else {
-        setRooms(data || []);
-      }
-
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
+    if (error) {
+      console.error("Error fetching rooms:", error);
+    } else {
+      setRooms(data || []);
     }
 
+    setLoading(false);
+  };
+
+  useEffect(() => {
     fetchRooms();
   }, []);
+
+  const handleEdit = (room: Room, field: keyof Room) => {
+    setEditingCell({ id: room.id, field });
+    setEditValue(String(room[field]));
+  };
+
+  const handleUpdate = async () => {
+    if (!editingCell) return;
+
+    const { id, field } = editingCell;
+    let value = editValue;
+
+    // Convert to number if the field is price_per_night
+    if (field === 'price_per_night') {
+      value = parseFloat(editValue).toString();
+    }
+
+    const { error } = await supabase
+      .from('rooms')
+      .update({ [field]: value })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error updating room:', error);
+    } else {
+      // Refresh the rooms data
+      fetchRooms();
+    }
+
+    setEditingCell(null);
+    setEditValue("");
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleUpdate();
+    }
+  };
 
   return (
     <Layout>
@@ -80,42 +120,87 @@ export default function Rooms() {
           <div className="w-2/3 overflow-x-auto shadow-md rounded-lg border border-gray-100">
             <Card>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Room Number</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Price/Night</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {rooms.map((room) => (
-                      <TableRow key={room.id}>
-                        <TableCell className="shrink-cell">{room.room_number}</TableCell>
-                        <TableCell className="shrink-cell">{room.type}</TableCell>
-                        <TableCell className="shrink-cell">${room.price_per_night.toFixed(2)}</TableCell>
-                        <TableCell className="shrink-cell">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="outline" size="sm">Actions</Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                              <DropdownMenuItem>View Details</DropdownMenuItem>
-                              <DropdownMenuItem>Edit Room</DropdownMenuItem>
-                              <DropdownMenuItem className="text-red-600">Delete Room</DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
+                <div className="max-h-96 overflow-y-auto">
+                  <Table>
+                    <TableHeader className="sticky top-0 z-10">
+                      <TableRow>
+                        <TableHead>Room Number</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Price/Night</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {rooms.map((room) => (
+                        <TableRow key={room.id}>
+                          <TableCell className="shrink-cell">
+                            {editingCell?.id === room.id && editingCell.field === 'room_number' ? (
+                              <Input
+                                value={editValue}
+                                onChange={(e) => setEditValue(e.target.value)}
+                                onBlur={handleUpdate}
+                                onKeyPress={handleKeyPress}
+                                className="w-24"
+                                autoFocus
+                              />
+                            ) : (
+                              <span onClick={() => handleEdit(room, 'room_number')}>{room.room_number}</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="shrink-cell">
+                            {editingCell?.id === room.id && editingCell.field === 'type' ? (
+                              <Input
+                                value={editValue}
+                                onChange={(e) => setEditValue(e.target.value)}
+                                onBlur={handleUpdate}
+                                onKeyPress={handleKeyPress}
+                                className="w-32"
+                                autoFocus
+                              />
+                            ) : (
+                              <span onClick={() => handleEdit(room, 'type')}>{room.type}</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="shrink-cell">
+                            {editingCell?.id === room.id && editingCell.field === 'price_per_night' ? (
+                              <Input
+                                value={editValue}
+                                onChange={(e) => setEditValue(e.target.value)}
+                                onBlur={handleUpdate}
+                                onKeyPress={handleKeyPress}
+                                className="w-24"
+                                type="number"
+                                autoFocus
+                              />
+                            ) : (
+                              <span onClick={() => handleEdit(room, 'price_per_night')}>
+                                ${room.price_per_night.toFixed(2)}
+                              </span>
+                            )}
+                          </TableCell>
+                          <TableCell className="shrink-cell">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm">Actions</Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent>
+                                <DropdownMenuItem>View Details</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleEdit(room, 'room_number')}>
+                                  Edit Room
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="text-red-600">Delete Room</DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </div>
           <div className="w-1/4 p-4">
-            {/* Add your calendar component here */}
             <div className="calendar">
               {/* Calendar content */}
             </div>
@@ -166,10 +251,17 @@ export default function Rooms() {
           80% { opacity: 1; }
         }
 
-         .shrink-cell {
-    padding: 8px 16px; /* Reduced padding for compact columns */
-    white-space: nowrap; /* Prevents text from wrapping */
-  }
+        .shrink-cell {
+          padding: 8px 16px;
+          white-space: nowrap;
+          cursor: pointer;
+        }
+
+        .shrink-cell span:hover {
+          background-color: #f3f4f6;
+          padding: 4px 8px;
+          border-radius: 4px;
+        }
       `}</style>
     </Layout>
   );
