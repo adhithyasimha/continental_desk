@@ -92,7 +92,7 @@ function Bookings() {
                     <TableHead>Guests</TableHead>
                     <TableHead>Payment Status</TableHead>
                     <TableHead>Total Price</TableHead>
-                    <TableHead>Actions</TableHead>
+                    
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -106,18 +106,7 @@ function Bookings() {
                       <TableCell>{booking.number_of_guests}</TableCell>
                       <TableCell>{booking.payment_status}</TableCell>
                       <TableCell>${booking.total_price.toFixed(2)}</TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button>Actions</Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            <DropdownMenuItem>View</DropdownMenuItem>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem>Delete</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+                      
                     </TableRow>
                   ))}
                 </TableBody>

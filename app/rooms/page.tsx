@@ -276,8 +276,8 @@ export default function Rooms() {
           <Calendar
             mode="single"
             selected={date}
-            onSelect={setDate}
-            className="w-1/3 ml-4"
+style={{marginLeft: "6%"}}
+            
           />
         </div>
       )}
