@@ -276,7 +276,7 @@ export default function Rooms() {
           <Calendar
             mode="single"
             selected={date}
-style={{marginLeft: "6%"}}
+style={{marginLeft: "7%"}}
             
           />
         </div>
